@@ -12,8 +12,8 @@ background = light black
 
 drawing :: Picture
 drawing = pictures
-	[ color ballColor $ circleSolid 30
-	, color paddleColor $ rectangleSolid 10 50
+	[ translate (-20) (-100) $ color ballColor $ circleSolid 30
+	, translate 30 50 $ color paddleColor $ rectangleSolid 10 50
 	]
 	where
 		ballColor = dark red
