@@ -22,6 +22,13 @@ paddleThick = 20
 window :: Display
 window = InWindow "Pingy Pong" (round screenW, round screenH) (10, 10)
 
+
+data Game = Game { ballLoc :: (Float, Float)
+                 , ballVel :: (Float, Float)
+                 , player1 :: Float
+                 , player2 :: Float
+                 }
+
 background :: Color
 background = light black
 
