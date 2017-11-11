@@ -10,14 +10,9 @@ screenW = 600
 screenH::Float
 screenH = 480
 
-wallH::Float
-wallH = 10
 
-paddleLen::Float
-paddleLen = 80
-
-paddleThick::Float
-paddleThick = 20
+background :: Color
+background = light black
 
 window :: Display
 window = InWindow "Pingy Pong" (round screenW, round screenH) (10, 10)
@@ -29,37 +24,50 @@ data Game = Game { ballLoc :: (Float, Float)
                  , player2 :: Float
                  }
 
-background :: Color
-background = light black
+initalState::Game
+initalState = Game (0,0) (0,0) 100 (-100)
 
-drawing :: Picture
-drawing = pictures [ ball
-				   , walls
-                   , mkPaddle rose (screenW /2 - paddleThick * 1.5) (-20)
-                   , mkPaddle orange (screenW /(-2) + paddleThick * 1.5) 40
-                   ]
-  where
-    --  The pong ball.
-    ball = translate (-10) 40 $ color ballColor $ circleSolid 10
-    ballColor = dark red
 
-    --  The bottom and top walls.
-    wall :: Float -> Picture
-    wall offset =
-      translate 0 offset $
-        color wallColor $
-          rectangleSolid screenW  wallH
+render :: Game -> Picture
+render g = pictures [ ball
+                    , walls
+                    , paddle1
+                    , paddle2
+                    ]
+    where 
+      ball = uncurry translate (ballLoc g) $ color ballColor $ circleSolid ballSize
+      ballColor = dark red
+      ballSize = 10
 
-    wallColor = greyN 0.5
-    walls = pictures [wall (screenH /2 - wallH), wall (screenH /(-2) + wallH)]
+      wall :: Float -> Picture
+      wall offset =
+        translate 0 offset $
+          color wallColor $
+            rectangleSolid screenW  wallH
 
-    --  Make a paddle of a given border and vertical offset.
-    mkPaddle :: Color -> Float -> Float -> Picture
-    mkPaddle col x y = pictures
-      [ translate x y $ color col $ rectangleSolid paddleThick paddleLen
-      , translate x y $ color paddleColor $ rectangleSolid (paddleThick - 6) (paddleLen - 6)
-      ]
+      wallColor = greyN 0.5
+      walls = pictures [wall (screenH /2 - wallH), wall (screenH /(-2) + wallH)]
 
-    paddleColor = light (light blue)
+      mkPaddle :: Color -> Float -> Float -> Picture
+      mkPaddle col x y = pictures
+        [ translate x y $ color col $ rectangleSolid paddleThick paddleLen
+        , translate x y $ color paddleFrameColor $ rectangleSolid (paddleThick - 6) (paddleLen - 6)
+        ]
+      paddleFrameColor = light blue
+
+      paddle1 = mkPaddle rose  (screenW / (-2) + paddleThick * 1.5) $ player1 g
+      paddle2 = mkPaddle green (screenW / 2 - paddleThick * 1.5) $ player2 g
+
+      wallH::Float
+      wallH = 10
+
+      paddleLen::Float
+      paddleLen = 80
+
+      paddleThick::Float
+      paddleThick = 20
+
+
+
 showTheWin :: IO ()
-showTheWin = display window background drawing
+showTheWin = display window background $ render initalState
