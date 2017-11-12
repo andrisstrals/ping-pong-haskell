@@ -1,6 +1,10 @@
 module Lib
-    ( showTheWin,
-      render
+    ( initalState
+    , render
+    , window
+    , background
+    , moveBall
+    , Game(..)
     ) where
 
 import Graphics.Gloss
@@ -81,9 +85,9 @@ moveBall sec game = game { ballLoc = (x1, y2) }
       x1 = x + sec * vx
       y2 = y + sec * vy
 
-showTheWin :: IO ()
-showTheWin = simulate window background fps initalState render update
-  where
-    fps = 60
-    update :: ViewPort -> Float -> Game -> Game
-    update _ = moveBall
+--showTheWin :: IO ()
+--showTheWin = simulate window background fps initalState render update
+--  where
+--    fps = 60
+--    update :: ViewPort -> Float -> Game -> Game
+--    update _ = moveBall
