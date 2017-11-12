@@ -4,14 +4,24 @@ module Lib
     , window
     , background
     , moveBall
+    , update
     , Game(..)
     ) where
 
 import Graphics.Gloss
 import Graphics.Gloss.Data.ViewPort
 
+type Position = (Float, Float)
+
+data Game = Game { ballLoc :: (Float, Float)
+                 , ballVel :: (Float, Float)
+                 , player1 :: Float
+                 , player2 :: Float
+                 }
+
+-- Various constants used
 screenW::Float
-screenW = 600
+screenW = 800
 
 screenH::Float
 screenH = 480
@@ -20,20 +30,31 @@ screenH = 480
 background :: Color
 background = light black
 
+
+wallH::Float
+wallH = 10
+
+paddleLen::Float
+paddleLen = 80
+
+paddleThick::Float
+paddleThick = 20
+
+ballRadius :: Float
+ballRadius = 10
+
+
+-- Initial game state definition
+initalState::Game
+initalState = Game (0, 0) (40, 180) 100 (-100)
+
+
+-- Main window
 window :: Display
 window = InWindow "Pingy Pong" (round screenW, round screenH) (100, 100)
 
 
-data Game = Game { ballLoc :: (Float, Float)
-                 , ballVel :: (Float, Float)
-                 , player1 :: Float
-                 , player2 :: Float
-                 }
-
-initalState::Game
-initalState = Game (0,0) (60, 40) 100 (-100)
-
-
+-- Render single game frame
 render :: Game -> Picture
 render g = pictures [ ball
                     , walls
@@ -41,10 +62,9 @@ render g = pictures [ ball
                     , paddle2
                     ]
     where 
-      ball = uncurry translate (ballLoc g) $ color ballColor $ circleSolid ballSize
+      ball = uncurry translate (ballLoc g) $ color ballColor $ circleSolid ballRadius
       ballColor = dark red
-      ballSize = 10
-
+      
       wall :: Float -> Picture
       wall offset =
         translate 0 offset $
@@ -52,7 +72,7 @@ render g = pictures [ ball
             rectangleSolid screenW  wallH
 
       wallColor = greyN 0.5
-      walls = pictures [wall (screenH /2 - wallH), wall (screenH /(-2) + wallH)]
+      walls = pictures [wall (screenH /2 - wallH /2), wall (screenH /(-2) + wallH /2)]
 
       mkPaddle :: Color -> Float -> Float -> Picture
       mkPaddle col x y = pictures
@@ -64,16 +84,9 @@ render g = pictures [ ball
       paddle1 = mkPaddle rose  (screenW / (-2) + paddleThick * 1.5) $ player1 g
       paddle2 = mkPaddle green (screenW / 2 - paddleThick * 1.5) $ player2 g
 
-      wallH::Float
-      wallH = 10
-
-      paddleLen::Float
-      paddleLen = 80
-
-      paddleThick::Float
-      paddleThick = 20
 
 
+-- Calculate the ball position after given time (sec)
 moveBall :: Float -> Game -> Game
 moveBall sec game = game { ballLoc = (x1, y2) }
     where 
@@ -85,9 +98,25 @@ moveBall sec game = game { ballLoc = (x1, y2) }
       x1 = x + sec * vx
       y2 = y + sec * vy
 
---showTheWin :: IO ()
---showTheWin = simulate window background fps initalState render update
---  where
---    fps = 60
---    update :: ViewPort -> Float -> Game -> Game
---    update _ = moveBall
+
+
+-- Detect collision with wall (top or bottom)
+wallCollision :: Position -> Bool
+--wallCollision (_, _) = False
+wallCollision (_, y) = topCollision || bottomCollision
+    where
+      topCollision = y > screenH/2 - wallH - ballRadius
+      bottomCollision = y < screenH/(-2) + wallH + ballRadius
+
+
+wallBounce :: Game -> Game
+wallBounce game = game { ballVel = (vx, vy1) }
+    where
+      (vx, vy) = ballVel game
+      (x, y) = ballLoc game
+      vy1 = if wallCollision (x, y) then (-vy) else vy
+
+
+update :: ViewPort -> Float -> Game -> Game
+update _ tm = wallBounce . moveBall tm
+
