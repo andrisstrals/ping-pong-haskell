@@ -102,12 +102,10 @@ moveBall sec game = game { ballLoc = (x1, y2) }
 
 -- Detect collision with wall (top or bottom)
 wallCollision :: Position -> Bool
---wallCollision (_, _) = False
 wallCollision (_, y) = topCollision || bottomCollision
     where
       topCollision = y > screenH/2 - wallH - ballRadius
       bottomCollision = y < screenH/(-2) + wallH + ballRadius
-
 
 wallBounce :: Game -> Game
 wallBounce game = game { ballVel = (vx, vy1) }
@@ -115,6 +113,9 @@ wallBounce game = game { ballVel = (vx, vy1) }
       (vx, vy) = ballVel game
       (x, y) = ballLoc game
       vy1 = if wallCollision (x, y) then (-vy) else vy
+
+paddleCollisionLeft :: Position -> Bool
+paddleCollisionLeft (x, y)
 
 
 update :: ViewPort -> Float -> Game -> Game
