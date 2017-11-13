@@ -46,7 +46,7 @@ ballRadius = 10
 
 -- Initial game state definition
 initalState::Game
-initalState = Game (0, 0) (40, 180) 100 (-100)
+initalState = Game (0, 0) (200, 0) 0 0
 
 
 -- Main window
@@ -81,8 +81,8 @@ render g = pictures [ ball
         ]
       paddleFrameColor = light blue
 
-      paddle1 = mkPaddle rose  (screenW / (-2) + paddleThick * 1.5) $ player1 g
-      paddle2 = mkPaddle green (screenW / 2 - paddleThick * 1.5) $ player2 g
+      paddle1 = mkPaddle rose  (screenW / (-2) + paddleThick ) $ player1 g
+      paddle2 = mkPaddle green (screenW / 2 - paddleThick ) $ player2 g
 
 
 
@@ -114,10 +114,29 @@ wallBounce game = game { ballVel = (vx, vy1) }
       (x, y) = ballLoc game
       vy1 = if wallCollision (x, y) then (-vy) else vy
 
-paddleCollisionLeft :: Position -> Bool
-paddleCollisionLeft (x, y)
+
+-- Detect collision with paddle
+paddleCollision :: Game -> Bool
+paddleCollision game = leftCollision || rightCollision
+    where
+        (ballX, ballY) = ballLoc game
+        paddleY = player1 game
+        leftCollision =   ballX < screenW / (-2) + 1.5 * paddleThick + ballRadius
+                          && ballY < paddleY + paddleLen / 2
+                          && ballY > paddleY - paddleLen / 2
+        rightCollision =  ballX > screenW / 2 - 1.5 * paddleThick - ballRadius
+                          && ballY < paddleY + paddleLen / 2
+                          && ballY > paddleY - paddleLen / 2
+
+paddleBounce :: Game -> Game
+paddleBounce game = game { ballVel = (vx1, vy)}
+    where 
+        (vx, vy) = ballVel game
+        vx1 = if paddleCollision game
+            then -vx
+            else vx
 
 
 update :: ViewPort -> Float -> Game -> Game
-update _ tm = wallBounce . moveBall tm
+update _ tm = paddleBounce . wallBounce . moveBall tm
 

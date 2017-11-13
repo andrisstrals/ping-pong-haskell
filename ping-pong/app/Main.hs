@@ -8,4 +8,4 @@ import Graphics.Gloss.Data.ViewPort
 main :: IO ()
 main = simulate window background fps initalState render update
   where
-    fps = 60
+    fps = 30
