@@ -137,6 +137,6 @@ paddleBounce game = game { ballVel = (vx1, vy)}
             else vx
 
 
-update :: ViewPort -> Float -> Game -> Game
-update _ tm = paddleBounce . wallBounce . moveBall tm
+update :: Float -> Game -> Game
+update tm = paddleBounce . wallBounce . moveBall tm
 
