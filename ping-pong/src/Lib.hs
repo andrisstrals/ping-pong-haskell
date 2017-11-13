@@ -1,10 +1,11 @@
 module Lib
-    ( initalState
+    ( initialState
     , render
     , window
     , background
     , moveBall
     , update
+    , initialState
     , Game(..)
     ) where
 
@@ -45,8 +46,8 @@ ballRadius = 10
 
 
 -- Initial game state definition
-initalState::Game
-initalState = Game (0, 0) (200, 0) 0 0
+initialState::Game
+initialState = Game (0, 0) (200, 0) 0 0
 
 
 -- Main window
@@ -138,5 +139,5 @@ paddleBounce game = game { ballVel = (vx1, vy)}
 
 
 update :: Float -> Game -> Game
-update tm = paddleBounce . wallBounce . moveBall tm
+update tm = (paddleBounce . wallBounce . moveBall) tm
 
