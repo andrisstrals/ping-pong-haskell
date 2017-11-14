@@ -47,7 +47,7 @@ ballRadius = 10
 
 -- Initial game state definition
 initialState::Game
-initialState = Game (0, 0) (200, 0) 0 0
+initialState = Game (0, 0) (200, 100) 0 0
 
 
 -- Main window
@@ -121,13 +121,14 @@ paddleCollision :: Game -> Bool
 paddleCollision game = leftCollision || rightCollision
     where
         (ballX, ballY) = ballLoc game
-        paddleY = player1 game
+        paddleY1 = player1 game
+        paddleY2 = player2 game
         leftCollision =   ballX < screenW / (-2) + 1.5 * paddleThick + ballRadius
-                          && ballY < paddleY + paddleLen / 2
-                          && ballY > paddleY - paddleLen / 2
+                          && ballY < paddleY1 + paddleLen / 2
+                          && ballY > paddleY1 - paddleLen / 2
         rightCollision =  ballX > screenW / 2 - 1.5 * paddleThick - ballRadius
-                          && ballY < paddleY + paddleLen / 2
-                          && ballY > paddleY - paddleLen / 2
+                          && ballY < paddleY2 + paddleLen / 2
+                          && ballY > paddleY2 - paddleLen / 2
 
 paddleBounce :: Game -> Game
 paddleBounce game = game { ballVel = (vx1, vy)}
@@ -139,5 +140,6 @@ paddleBounce game = game { ballVel = (vx1, vy)}
 
 
 update :: Float -> Game -> Game
-update tm = (paddleBounce . wallBounce . moveBall) tm
+--update tm = paddleBounce . moveBall tm
+update tm = paddleBounce . wallBounce . moveBall tm
 
