@@ -6,7 +6,10 @@ module Lib
     , moveBall
     , update
     , initialState
+    , moveLeftPaddle
+    , moveRightPaddle
     , Game(..)
+    , paddleStep
     ) where
 
 import Graphics.Gloss
@@ -44,6 +47,8 @@ paddleThick = 20
 ballRadius :: Float
 ballRadius = 10
 
+paddleStep :: Float
+paddleStep = 10
 
 -- Initial game state definition
 initialState::Game
@@ -100,6 +105,20 @@ moveBall sec game = game { ballLoc = (x1, y2) }
       y2 = y + sec * vy
 
 
+moveRightPaddle :: Float -> Game -> Game
+moveRightPaddle step game = game { player2 = calcPaddleMove (player2 game) step }
+
+
+moveLeftPaddle :: Float -> Game -> Game
+moveLeftPaddle step game = game { player1 = calcPaddleMove (player1 game) step }
+
+
+calcPaddleMove :: Float -> Float -> Float
+calcPaddleMove oldY step = 
+               if oldY + step < screenH / 2 - paddleLen / 2 && oldY + step > screenH / (-2) + paddleLen / 2
+               then oldY + step
+               else oldY
+
 
 -- Detect collision with wall (top or bottom)
 wallCollision :: Position -> Bool
@@ -140,6 +159,5 @@ paddleBounce game = game { ballVel = (vx1, vy)}
 
 
 update :: Float -> Game -> Game
---update tm = paddleBounce . moveBall tm
 update tm = paddleBounce . wallBounce . moveBall tm
 
