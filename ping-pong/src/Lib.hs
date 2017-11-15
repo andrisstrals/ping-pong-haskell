@@ -64,13 +64,14 @@ window = InWindow "Pingy Pong" (round screenW, round screenH) (100, 100)
 
 -- Render single game frame
 render :: Game -> Picture
-render g = pictures [ ball
-                    , walls
-                    , paddle1
-                    , paddle2
-                    ]
+render game = pictures [ ball
+                       , walls
+                       , paddle1
+                       , paddle2
+                       , scoreboard
+                       ]
     where 
-      ball = uncurry translate (ballLoc g) $ color ballColor $ circleSolid ballRadius
+      ball = uncurry translate (ballLoc game) $ color ballColor $ circleSolid ballRadius
       ballColor = dark red
       
       wall :: Float -> Picture
@@ -89,8 +90,14 @@ render g = pictures [ ball
         ]
       paddleFrameColor = light blue
 
-      paddle1 = mkPaddle rose  (screenW / (-2) + paddleThick ) $ player1 g
-      paddle2 = mkPaddle green (screenW / 2 - paddleThick ) $ player2 g
+      paddle1 = mkPaddle rose  (screenW / (-2) + paddleThick ) $ player1 game
+      paddle2 = mkPaddle green (screenW / 2 - paddleThick ) $ player2 game
+
+      scoreboard = color scorecolour $ text scoretext
+      scoretext = if suspended game then
+                     (show $ score1 game) ++ " : " ++ (show $ score2 game)
+                  else ""
+      scorecolour = red
 
 
 
