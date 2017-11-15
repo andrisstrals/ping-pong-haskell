@@ -8,7 +8,7 @@ import Graphics.Gloss.Interface.Pure.Game
 
 
 handleEvents :: Event -> Game -> Game
-handleEvents (EventKey (Char 'r') _ _ _) game = initialState
+handleEvents (EventKey (Char 'r') _ _ _) game = game { ballLoc = (0, 0), ballVel = (200, 100), suspended = False }
 handleEvents (EventKey (Char 'w') _ _ _) game = moveLeftPaddle paddleStep game
 handleEvents (EventKey (Char 's') _ _ _) game = moveLeftPaddle (-paddleStep) game
 handleEvents (EventKey (SpecialKey KeyUp) _ _ _) game = moveRightPaddle paddleStep game

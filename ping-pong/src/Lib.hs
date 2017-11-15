@@ -5,7 +5,6 @@ module Lib
     , background
     , moveBall
     , update
-    , initialState
     , moveLeftPaddle
     , moveRightPaddle
     , Game(..)
@@ -21,6 +20,9 @@ data Game = Game { ballLoc :: (Float, Float)
                  , ballVel :: (Float, Float)
                  , player1 :: Float
                  , player2 :: Float
+                 , score1 :: Int
+                 , score2 :: Int
+                 , suspended :: Bool
                  }
 
 -- Various constants used
@@ -52,7 +54,7 @@ paddleStep = 10
 
 -- Initial game state definition
 initialState::Game
-initialState = Game (0, 0) (200, 100) 0 0
+initialState = Game (0, 0) (200, 100) 0 0 0 0 True
 
 
 -- Main window
@@ -94,15 +96,17 @@ render g = pictures [ ball
 
 -- Calculate the ball position after given time (sec)
 moveBall :: Float -> Game -> Game
-moveBall sec game = game { ballLoc = (x1, y2) }
-    where 
-      --old ball location and velocity
-      (x, y) = ballLoc game
-      (vx, vy) = ballVel game
+moveBall sec game = if suspended game then game
+                    else
+                        game { ballLoc = (x1, y2) }
+                        where 
+                          --old ball location and velocity
+                          (x, y) = ballLoc game
+                          (vx, vy) = ballVel game
 
-      --new ball location
-      x1 = x + sec * vx
-      y2 = y + sec * vy
+                          --new ball location
+                          x1 = x + sec * vx
+                          y2 = y + sec * vy
 
 
 moveRightPaddle :: Float -> Game -> Game
@@ -157,7 +161,16 @@ paddleBounce game = game { ballVel = (vx1, vy)}
             then -vx
             else vx
 
+detectDrop :: Game -> Game
+detectDrop game = if x > screenW / 2 - ballRadius && not susp
+                  then game { score1 = 1 + score1 game , suspended = True }
+                  else if x < screenW / (-2) + ballRadius && not susp
+                    then game { score2 = 1 + score2 game , suspended = True }
+                  else game
+                  where 
+                    susp = suspended game
+                    (x, _) = ballLoc game
 
 update :: Float -> Game -> Game
-update tm = paddleBounce . wallBounce . moveBall tm
+update tm = detectDrop . paddleBounce . wallBounce . moveBall tm
 
