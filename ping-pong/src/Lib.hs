@@ -147,8 +147,8 @@ wallBounce game = game { ballVel = (vx, vy1) }
 
 
 -- Detect collision with paddle
-paddleCollision :: Game -> Bool
-paddleCollision game = leftCollision || rightCollision
+paddleCollision :: Game -> (Bool, Float)
+paddleCollision game = (leftCollision || rightCollision, hitpoint)
     where
         (ballX, ballY) = ballLoc game
         paddleY1 = player1 game
@@ -159,14 +159,17 @@ paddleCollision game = leftCollision || rightCollision
         rightCollision =  ballX > screenW / 2 - 1.5 * paddleThick - ballRadius
                           && ballY < paddleY2 + paddleLen / 2
                           && ballY > paddleY2 - paddleLen / 2
+        hitpoint = if leftCollision then paddleY1 else paddleY2
 
 paddleBounce :: Game -> Game
-paddleBounce game = game { ballVel = (vx1, vy)}
+paddleBounce game = game { ballVel = vel}
     where 
         (vx, vy) = ballVel game
-        vx1 = if paddleCollision game
-            then -vx
-            else vx
+        (hit, paddleY) = paddleCollision game
+        vel = if hit
+            then (-vx, vy + arch)
+            else (vx, vy)
+        arch = 0
 
 detectDrop :: Game -> Game
 detectDrop game = if x > screenW / 2 - ballRadius && not susp
