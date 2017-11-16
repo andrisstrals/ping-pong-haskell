@@ -93,7 +93,7 @@ render game = pictures [ ball
       paddle1 = mkPaddle rose  (screenW / (-2) + paddleThick ) $ player1 game
       paddle2 = mkPaddle green (screenW / 2 - paddleThick ) $ player2 game
 
-      scoreboard = color scorecolour $ text scoretext
+      scoreboard = translate 0 (screenH/2 - 60) $ scale 0.3 0.3 $ color scorecolour $ text scoretext
       scoretext = if suspended game then
                      (show $ score1 game) ++ " : " ++ (show $ score2 game)
                   else ""
