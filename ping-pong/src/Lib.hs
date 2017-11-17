@@ -165,11 +165,15 @@ paddleBounce :: Game -> Game
 paddleBounce game = game { ballVel = vel}
     where 
         (vx, vy) = ballVel game
+        (x, y)   = ballLoc game
         (hit, paddleY) = paddleCollision game
         vel = if hit
-            then (-vx, vy + arch)
+            then (-vx, archvy )
             else (vx, vy)
-        arch = 0
+        archvy = abs vx * tan (normalAngle + archedAngle)
+        normalAngle = atan (vy / abs vx)
+        archedAngle = (y - paddleY) / paddleLen
+
 
 detectDrop :: Game -> Game
 detectDrop game = if x > screenW / 2 - ballRadius && not susp
