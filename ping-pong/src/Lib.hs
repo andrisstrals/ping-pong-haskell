@@ -54,7 +54,7 @@ paddleStep = 10
 
 -- Initial game state definition
 initialState::Game
-initialState = Game (0, 0) (200, 100) 0 0 0 0 True
+initialState = Game (0, 0) (300, 0) 0 0 0 0 True
 
 
 -- Main window
@@ -172,7 +172,7 @@ paddleBounce game = game { ballVel = vel}
             else (vx, vy)
         archvy = abs vx * tan (normalAngle + archedAngle)
         normalAngle = atan (vy / abs vx)
-        archedAngle = (y - paddleY) / paddleLen
+        archedAngle = (y - paddleY) / (paddleLen * 0.7)
 
 
 detectDrop :: Game -> Game
