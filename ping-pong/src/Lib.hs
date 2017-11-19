@@ -49,7 +49,7 @@ paddleThick::Float
 paddleThick = 20
 
 paddleVelocity::Float
-paddleVelocity = 200
+paddleVelocity = 300
 
 ballRadius :: Float
 ballRadius = 10
@@ -127,10 +127,9 @@ movePaddles tm game = game { player1 = pl1, player2 = pl2}
 
         movePaddle :: Float -> (Float, Movement) -> (Float, Movement)
         movePaddle tm (y, dir)  
-          | dir == MvUp = (y + tm * paddleVelocity, dir)
-          | dir == MvDown = (y - tm * paddleVelocity, dir)
+          | dir == MvUp = let newy = y + tm * paddleVelocity in if newy < screenH / 2 - paddleLen /2 - wallH then (newy, dir) else (y, dir)
+          | dir == MvDown = let newy = y - tm * paddleVelocity in if newy > screenH / (-2) + paddleLen /2 + wallH then (newy, dir) else (y, dir)
           | otherwise = (y, dir)
-
 
 
 
