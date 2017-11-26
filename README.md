@@ -1,13 +1,13 @@
 # ping-pong-haskell
-####Haskell tutorial follow-up
+#### Haskell tutorial follow-up
 https://github.com/elisehuard/game-in-haskell
 
-####Few other places to look:
+#### Few other places to look:
 
 http://andrew.gibiansky.com/blog/haskell/haskell-gloss/
 https://ocharles.org.uk/blog/posts/2013-12-10-24-days-of-hackage-gloss.html
 
-##How to build:
+## How to build:
 1. Install Haskell Stack: https://docs.haskellstack.org/en/stable/install_and_upgrade/
 2. Clone this repo
 3. cd ping-pong-haskell
