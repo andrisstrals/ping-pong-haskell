@@ -18,6 +18,7 @@ library
   exposed-modules:     Lib
   build-depends:       base >= 4.7 && < 5
                      , gloss
+                     , random
   default-language:    Haskell2010
 
 executable ping-pong
@@ -27,6 +28,7 @@ executable ping-pong
   build-depends:       base
                      , gloss
                      , ping-pong
+                     , random
   default-language:    Haskell2010
 
 test-suite ping-pong-test
@@ -36,6 +38,7 @@ test-suite ping-pong-test
   build-depends:       base
                      , gloss
                      , ping-pong
+                     , random
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   default-language:    Haskell2010
 

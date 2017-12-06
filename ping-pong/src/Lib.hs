@@ -13,10 +13,11 @@ module Lib
 
 import Graphics.Gloss
 import Graphics.Gloss.Data.ViewPort
+import System.Random
 
 type Position = (Float, Float)
 
-data Movement = MvUp | MvDown | Stop deriving Eq
+data Movement = MvUp | MvDown | Stop deriving (Eq, Show)
 
 data Game = Game { ballLoc :: (Float, Float)
                  , ballVel :: (Float, Float)
@@ -25,7 +26,9 @@ data Game = Game { ballLoc :: (Float, Float)
                  , score1 :: Int
                  , score2 :: Int
                  , suspended :: Bool
+                 , gen :: StdGen
                  }
+                 deriving (Show)
 
 -- Various constants used
 screenW::Float
@@ -57,7 +60,7 @@ ballRadius = 10
 
 -- Initial game state definition
 initialState::Game
-initialState = Game (0, 0) (300, 0) (0, Stop) (0, Stop) 0 0 True
+initialState = Game (0, 0) (300, 0) (0, Stop) (0, Stop) 0 0 True $ mkStdGen 1
 
 
 
