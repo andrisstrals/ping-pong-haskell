@@ -32,6 +32,10 @@ handleEvents _ game = game
 
 
 main :: IO ()
-main = play window background fps initialState render handleEvents update
-  where
-    fps = 60
+main = do
+    g <- newStdGen
+    let iState = initialState { gen = g }
+    play window background fps iState render handleEvents update
+      where
+        fps = 60
+
